@@ -6,15 +6,19 @@ import java.net.URL;
 import java.util.List;
 
 public class Main {
+    private SpellCrawler spellCrawler = new SpellCrawlerImpl();
 
     public static void main(String... args) {
         try {
-            SpellCrawler spellCrawler = new SpellCrawlerImpl();
-            List<URL> spellUrls = spellCrawler.determineAllSpellUrls("[a-z]");
-            spellUrls.forEach(System.out::println);
-            System.out.println(spellUrls.size());
+            new Main().run();
         } catch(Exception ex) {
             System.out.println(ex);
         }
+    }
+
+    public void run() {
+        List<URL> spellUrls = spellCrawler.determineAllSpellUrls("[a-z]");
+        spellUrls.forEach(System.out::println);
+        System.out.println(spellUrls.size());
     }
 }

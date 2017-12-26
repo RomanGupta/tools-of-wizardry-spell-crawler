@@ -7,7 +7,7 @@ public enum Config {
 
     private String value;
 
-    private Config(String value) {
+    Config(String value) {
         this.value = value;
     }
 
