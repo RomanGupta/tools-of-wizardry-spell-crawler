@@ -1,5 +1,6 @@
 package de.rge.tools.of.wizardry.spell.crawler;
 
+import de.rge.tools.of.wizardry.spell.crawler.api.SpellCrawler;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;

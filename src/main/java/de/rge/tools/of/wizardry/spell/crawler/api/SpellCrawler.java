@@ -1,4 +1,4 @@
-package de.rge.tools.of.wizardry.spell.crawler;
+package de.rge.tools.of.wizardry.spell.crawler.api;
 
 import java.net.URL;
 import java.util.List;

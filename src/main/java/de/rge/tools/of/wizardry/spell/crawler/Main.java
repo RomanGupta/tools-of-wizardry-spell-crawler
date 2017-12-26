@@ -1,5 +1,7 @@
 package de.rge.tools.of.wizardry.spell.crawler;
 
+import de.rge.tools.of.wizardry.spell.crawler.api.SpellCrawler;
+import de.rge.tools.of.wizardry.spell.crawler.api.SpellParser;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellParserImpl;
 import org.slf4j.Logger;

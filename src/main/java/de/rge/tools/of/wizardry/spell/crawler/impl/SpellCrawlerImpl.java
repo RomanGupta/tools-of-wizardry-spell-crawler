@@ -1,7 +1,7 @@
 package de.rge.tools.of.wizardry.spell.crawler.impl;
 
 import de.rge.tools.of.wizardry.spell.crawler.Config;
-import de.rge.tools.of.wizardry.spell.crawler.SpellCrawler;
+import de.rge.tools.of.wizardry.spell.crawler.api.SpellCrawler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
