@@ -29,7 +29,7 @@ public class Main {
     }
 
     private void printSpell(URL spellUrl) {
-        String spellName = spellParser.parseName(spellUrl);
-        log.info("spell name: {} for spell url {}", spellName, spellUrl);
+        Spell spell = spellParser.parseSpell(spellUrl);
+        log.info("spell name: {} for spell url {}", spell, spellUrl);
     }
 }

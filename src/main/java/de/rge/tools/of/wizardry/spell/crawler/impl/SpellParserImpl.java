@@ -1,5 +1,6 @@
 package de.rge.tools.of.wizardry.spell.crawler.impl;
 
+import de.rge.tools.of.wizardry.spell.crawler.Spell;
 import de.rge.tools.of.wizardry.spell.crawler.SpellParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,16 +15,27 @@ public class SpellParserImpl implements SpellParser {
     private static final Logger log = LoggerFactory.getLogger(SpellParserImpl.class);
 
     @Override
-    public String parseName(URL spellUrl) {
+    public Spell parseSpell(URL spellUrl) {
         try {
             Document htmlDocument = Jsoup.connect(spellUrl.toExternalForm()).get();
-            Elements titles = htmlDocument.select("h1");
-            if(1 != titles.size()) {
-                log.warn("no of titles is not equal to 1 for {}", spellUrl);
-            }
-            return titles.first().text();
+            return parseSpell(htmlDocument);
         } catch(IOException ioe) {
             throw new IllegalArgumentException("error while opening html document for " + spellUrl);
         }
+
+    }
+
+    private Spell parseSpell(Document htmlDocument) {
+        Spell spell = new Spell();
+        spell.setName(parseName(htmlDocument));
+        return spell;
+    }
+
+    private String parseName(Document htmlDocument) {
+            Elements titles = htmlDocument.select("h1");
+            if(1 != titles.size()) {
+                log.warn("number of titles is not equal to 1 for {}", htmlDocument.baseUri());
+            }
+            return titles.first().text();
     }
 }
