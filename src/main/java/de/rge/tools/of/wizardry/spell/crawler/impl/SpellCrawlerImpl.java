@@ -2,7 +2,7 @@ package de.rge.tools.of.wizardry.spell.crawler.impl;
 
 import de.rge.tools.of.wizardry.spell.crawler.Config;
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellCrawler;
-import org.jsoup.Jsoup;
+import de.rge.tools.of.wizardry.spell.crawler.util.HtmlDocumentUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -17,25 +17,21 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class SpellCrawlerImpl implements SpellCrawler {
-    private String baseUrl;
+    private HtmlDocumentUtil htmlDocumentUtil = new HtmlDocumentUtil();
+
+    private URL baseUrl;
     private Pattern urlPattern;
 
     @Override
     public List<URL> determineAllSpellUrls(String startingLetterPattern) {
-        try {
             init(startingLetterPattern);
-            Document htmlDocument = Jsoup.connect(baseUrl).get();
+            Document htmlDocument = htmlDocumentUtil.read(baseUrl);
             Elements links = htmlDocument.select("a[href]");
             return links.stream()
                     .map(this::extractLink)
                     .filter(this::isValidSpellUrl)
                     .map(this::mapToUrl)
                     .collect(Collectors.toList());
-
-
-        } catch(IOException ioe) {
-            throw new IllegalArgumentException("error while opening html document for", ioe);
-        }
     }
 
     private void init(String startingLetterPattern) {
@@ -43,11 +39,11 @@ public class SpellCrawlerImpl implements SpellCrawler {
         urlPattern = initUrlPattern(startingLetterPattern);
     }
 
-    private String initBaseUrl() {
+    private URL initBaseUrl() {
         try(InputStream is = getClass().getResourceAsStream(Config.CONFIG_PROPERTIES.getValue())) {
             Properties props = new Properties();
             props.load(is);
-            return props.getProperty(Config.KEY_BASE_URL.getValue());
+            return new URL(props.getProperty(Config.KEY_BASE_URL.getValue()));
         } catch(IOException ioe) {
             throw new IllegalArgumentException("error while reading properties", ioe);
         }
