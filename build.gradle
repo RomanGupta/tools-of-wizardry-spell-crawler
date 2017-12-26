@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation 'org.jsoup:jsoup:1.11.2'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:3.8.0'
 }
