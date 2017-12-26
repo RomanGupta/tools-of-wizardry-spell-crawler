@@ -34,7 +34,7 @@ public class SpellCrawlerImpl implements SpellCrawler {
 
 
         } catch(IOException ioe) {
-            throw new IllegalArgumentException("error while reading base url", ioe);
+            throw new IllegalArgumentException("error while opening html document for", ioe);
         }
     }
 
