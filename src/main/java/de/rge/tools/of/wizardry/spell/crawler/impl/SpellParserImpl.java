@@ -15,6 +15,8 @@ public class SpellParserImpl implements SpellParser {
 
     private HtmlDocumentUtil htmlDocumentUtil = new HtmlDocumentUtil();
 
+    private SchoolParserImpl schoolParser = new SchoolParserImpl();
+
     @Override
     public Spell parseSpell(URL spellUrl) {
         Document htmlDocument = htmlDocumentUtil.read(spellUrl);
@@ -24,6 +26,7 @@ public class SpellParserImpl implements SpellParser {
     private Spell parseSpell(Document htmlDocument) {
         Spell spell = new Spell();
         spell.setName(parseName(htmlDocument));
+        spell.setSchool(schoolParser.parseSchool(htmlDocument));
         return spell;
     }
 
@@ -34,4 +37,5 @@ public class SpellParserImpl implements SpellParser {
         }
         return titles.first().text();
     }
+
 }
