@@ -4,6 +4,7 @@ import de.rge.tools.of.wizardry.spell.crawler.api.SpellCrawler;
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellParser;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellParserImpl;
+import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

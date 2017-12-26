@@ -1,6 +1,6 @@
 package de.rge.tools.of.wizardry.spell.crawler.impl;
 
-import de.rge.tools.of.wizardry.spell.crawler.Spell;
+import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
