@@ -18,7 +18,7 @@ public class SpellParserImpl implements SpellParser {
 
     private HtmlDocumentUtil htmlDocumentUtil = new HtmlDocumentUtil();
 
-    private SchoolParserImpl schoolParser = new SchoolParserImpl();
+    private SchoolAndLevelParserImpl schoolParser = new SchoolAndLevelParserImpl();
 
     @Override
     public Spell parseSpell(URL spellUrl) {
@@ -76,7 +76,7 @@ public class SpellParserImpl implements SpellParser {
     private Spell parseSpell(Elements refParagraphs) {
         Spell spell = new Spell();
         spell.setName(parseName(refParagraphs));
-        spell.setSchool(schoolParser.parseSchool(refParagraphs));
+        schoolParser.parseSchoolAndLevel(spell, refParagraphs);
         return spell;
     }
 
