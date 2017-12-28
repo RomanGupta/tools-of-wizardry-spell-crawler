@@ -6,16 +6,13 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class SchoolParserImpl {
     private static final Logger log = LoggerFactory.getLogger(SchoolParserImpl.class);
 
-    public String parseSchool(Elements refParagraphs) {
-        for(Element ref : refParagraphs) {
-            String potentialSchool = parseSchool(ref.nextElementSibling());
-            if(MagicSchool.isValidSchool(potentialSchool)) {
+    public MagicSchool parseSchool(Elements refParagraphs) {
+        for (Element ref : refParagraphs) {
+            MagicSchool potentialSchool = parseSchool(ref.nextElementSibling());
+            if (null != potentialSchool) {
                 return potentialSchool;
             }
         }
@@ -23,16 +20,13 @@ public class SchoolParserImpl {
         return null;
     }
 
-    private String parseSchool(Element schoolParagraph) {
-        List<String> words = Arrays.asList(schoolParagraph.text().split("\\s+"));
-        if("School".equals(words.get(0))) {
-            return cleanSchool(words.get(1));
+    private MagicSchool parseSchool(Element schoolParagraph) {
+        String[] detailsSchoolOrLevel = schoolParagraph.text().split(";");
+        String[] schoolDetails = detailsSchoolOrLevel[0].split("\\s+");
+        MagicSchool potentialSchool = MagicSchool.convert(schoolDetails[1]);
+        if ("School".equals(schoolDetails[0]) && null != potentialSchool) {
+            return potentialSchool;
         }
         return null;
     }
-
-    private String cleanSchool(String potentialSchool) {
-        return potentialSchool.replaceAll("[; ]", "").toLowerCase();
-    }
-
 }

@@ -4,7 +4,7 @@ import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSchool;
 
 public class Spell {
     private String name;
-    private String school;
+    private MagicSchool school;
 
     public String getName() {
         return name;
@@ -14,11 +14,11 @@ public class Spell {
         this.name = name;
     }
 
-    public String getSchool() {
+    public MagicSchool getSchool() {
         return school;
     }
 
-    public void setSchool(String school) {
+    public void setSchool(MagicSchool school) {
         this.school = school;
     }
 
