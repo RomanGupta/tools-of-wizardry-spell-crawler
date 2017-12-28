@@ -1,53 +1,38 @@
 package de.rge.tools.of.wizardry.spell.crawler.impl;
 
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSchool;
-import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class SchoolParserImpl {
     private static final Logger log = LoggerFactory.getLogger(SchoolParserImpl.class);
 
-    private static final Pattern SCHOOL_PATTERN = Pattern.compile(assembleSchoolPattern());
-
-    public String parseSchool(Document htmlDocument) {
-        Elements schoolTitles = findSchoolTitles(htmlDocument);
-        String potentialSchool = schoolTitles.first().nextElementSibling().text();
-        if(MagicSchool.isValidSchool(potentialSchool)) {
-            return potentialSchool;
+    public String parseSchool(Elements refParagraphs) {
+        for(Element ref : refParagraphs) {
+            String potentialSchool = parseSchool(ref.nextElementSibling());
+            if(MagicSchool.isValidSchool(potentialSchool)) {
+                return potentialSchool;
+            }
         }
-        String parentContent = schoolTitles.first().parent().text();
-        return parseSchool(parentContent);
+        log.warn("no school found for {}", refParagraphs.first().text());
+        return null;
     }
 
-    private Elements findSchoolTitles(Document htmlDocument) {
-        Elements schoolTitles = htmlDocument.select("b:matchesOwn(^School$)");
-        if(schoolTitles.isEmpty()) {
-            throw new IllegalArgumentException("found no schoolTitles for " + htmlDocument.baseUri());
-        } else if (schoolTitles.size() > 1) {
-            log.warn("number of schoolTitles greater than 1 for {}", htmlDocument.baseUri());
-        }
-        return schoolTitles;
-    }
-
-    private String parseSchool(String content) {
-        Matcher matcher = SCHOOL_PATTERN.matcher(content);
-        if(matcher.find()) {
-            return matcher.group();
+    private String parseSchool(Element schoolParagraph) {
+        List<String> words = Arrays.asList(schoolParagraph.text().split("\\s+"));
+        if("School".equals(words.get(0))) {
+            return cleanSchool(words.get(1));
         }
         return null;
     }
 
-    private static String assembleSchoolPattern() {
-        return Arrays.stream(MagicSchool.values())
-                .map(MagicSchool::name)
-                .map(String::toLowerCase)
-                .collect(Collectors.joining("|", "(", ")"));
+    private String cleanSchool(String potentialSchool) {
+        return potentialSchool.replaceAll("[; ]", "").toLowerCase();
     }
+
 }

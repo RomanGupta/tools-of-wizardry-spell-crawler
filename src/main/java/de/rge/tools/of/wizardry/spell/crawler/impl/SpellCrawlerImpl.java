@@ -1,6 +1,7 @@
 package de.rge.tools.of.wizardry.spell.crawler.impl;
 
 import de.rge.tools.of.wizardry.spell.crawler.Config;
+import de.rge.tools.of.wizardry.spell.crawler.UrlMarker;
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellCrawler;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.Source;
 import de.rge.tools.of.wizardry.spell.crawler.util.HtmlDocumentUtil;
@@ -28,8 +29,8 @@ public class SpellCrawlerImpl implements SpellCrawler {
         Elements links = htmlDocument.select("ul[title~=" + startingLetterPattern + " Spells] a[href]");
         return links.stream()
                 .map(this::extractLink)
-                .filter(this::isValidSpellUrl)
                 .map(this::mapToUrl)
+                .filter(this::isValidSpellUrl)
                 .collect(Collectors.toList());
     }
 
@@ -47,8 +48,9 @@ public class SpellCrawlerImpl implements SpellCrawler {
         return link.attr("href");
     }
 
-    private boolean isValidSpellUrl(String link) {
-        return link.contains("spells/");
+    private boolean isValidSpellUrl(URL link) {
+        String externalForm = link.toExternalForm();
+        return externalForm.contains("spells/") && !UrlMarker.isIgnored(externalForm);
     }
 
     private URL mapToUrl(String link) {

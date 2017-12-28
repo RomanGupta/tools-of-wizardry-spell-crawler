@@ -14,10 +14,7 @@ public enum MagicSchool {
     UNIVERSAL;
 
     public static boolean isValidSchool(String text) {
-        if(null == text) {
-            return false;
-        }
-        return Arrays.stream(values())
+        return null != text && Arrays.stream(values())
                 .map(MagicSchool::name)
                 .anyMatch(school -> school.equals(text.toUpperCase()));
     }
