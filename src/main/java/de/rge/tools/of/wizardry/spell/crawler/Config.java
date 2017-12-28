@@ -2,8 +2,7 @@ package de.rge.tools.of.wizardry.spell.crawler;
 
 public enum Config {
     BASE_PACKAGE("/de/rge/tools/of/wizardry/spell/crawler/"),
-    CONFIG_PROPERTIES(BASE_PACKAGE.getValue() + "config.properties"),
-    KEY_BASE_URL("baseUrl");
+    CONFIG_PROPERTIES(BASE_PACKAGE.getValue() + "config.properties");
 
     private String value;
 

@@ -6,6 +6,7 @@ import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellParserImpl;
 import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSchool;
+import de.rge.tools.of.wizardry.spell.crawler.model.enums.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +32,11 @@ public class Main {
     }
 
     private void run() {
-        List<URL> spellUrls = spellCrawler.determineAllSpellUrls("[a-z]");
-        spellUrls.forEach(this::printSpell);
-        schoolsForSpells.forEach((k, v) -> System.out.println(k + ":\n" + v));
+        List<URL> spellUrls = spellCrawler.determineAllSpellUrls(Source.SPELLS_CORE_RULEBOOK, "[A]");
+        System.out.println("found " + spellUrls.size() + " spells");
+        spellUrls.forEach(System.out::println);
+        // spellUrls.forEach(this::printSpell);
+        // schoolsForSpells.forEach((k, v) -> System.out.println(k + ":\n" + v));
     }
 
     private void printSpell(URL spellUrl) {
