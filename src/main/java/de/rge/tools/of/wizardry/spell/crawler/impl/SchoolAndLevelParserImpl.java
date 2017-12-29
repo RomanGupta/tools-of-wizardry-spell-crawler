@@ -22,6 +22,7 @@ public class SchoolAndLevelParserImpl {
     private static final Logger log = LoggerFactory.getLogger(SchoolAndLevelParserImpl.class);
 
     private static final Pattern SCHOOL_DETAILS_PATTERN = Pattern.compile("^School\\s+(\\w+)\\s*(\\(\\w+\\))?\\s*(\\[[A-Za-z\\-, ]+\\])?");
+    private static final Pattern DESCRIPTOR_CONNECTOR_OR_PATTERN = Pattern.compile("[, ]\\s*or ");
 
     public void parseSchoolAndLevel(final Spell spell, Elements refParagraphs) {
         Element relevantParagraph = getRelevantParagraph(refParagraphs);
@@ -79,8 +80,9 @@ public class SchoolAndLevelParserImpl {
     private void parseDescriptors(Spell spell, Matcher matcher) {
         String descriptorsMatch = matcher.group(3);
         if (null != descriptorsMatch) {
-            if(descriptorsMatch.contains("or ")) {
-                descriptorsMatch = descriptorsMatch.replaceAll("[, ]\\s*or ", ", ");
+            Matcher connectorMatcher = DESCRIPTOR_CONNECTOR_OR_PATTERN.matcher(descriptorsMatch);
+            if(connectorMatcher.find()) {
+                descriptorsMatch = connectorMatcher.replaceAll(", ");
                 spell.setDescriptorsConnector(OR);
             }
             spell.setDescriptors(convertDescriptors(descriptorsMatch));
