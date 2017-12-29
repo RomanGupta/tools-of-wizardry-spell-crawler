@@ -5,7 +5,6 @@ import de.rge.tools.of.wizardry.spell.crawler.api.SpellParser;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellParserImpl;
 import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
-import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSchool;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSubschool;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.Source;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ public class Main {
 
     private SpellParser spellParser = new SpellParserImpl();
 
-    private Map<MagicSchool, List<URL>> schoolsForSpells = new HashMap<>();
     private Map<MagicSubschool, List<URL>> subschoolsForSpells = new HashMap<>();
 
 
@@ -48,6 +46,7 @@ public class Main {
             log.info("spell subschool: {}", spell.getSubschool());
             log.info("spell descriptors: {}", spell.getDescriptors());
             log.info("spell descriptors connector: {}", spell.getDescriptorsConnector());
+            log.info("spell level per class: {}", spell.getLevelPerClass());
 
             subschoolsForSpells.putIfAbsent(spell.getSubschool(), new ArrayList<>());
             subschoolsForSpells.get(spell.getSubschool()).add(spellUrl);
