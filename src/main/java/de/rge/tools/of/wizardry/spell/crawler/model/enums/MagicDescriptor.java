@@ -1,6 +1,8 @@
 package de.rge.tools.of.wizardry.spell.crawler.model.enums;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public enum MagicDescriptor {
     // Core Rule Book
@@ -34,7 +36,13 @@ public enum MagicDescriptor {
     SEE_TEXT;
 
     public enum Connector {
-        AND, OR
+        AND, OR;
+
+        public static List<Connector> getValueListWithNull() {
+            List<Connector> connectors = new ArrayList<>(Arrays.asList(values()));
+            connectors.add(0, null);
+            return connectors;
+        }
     }
 
 
@@ -56,5 +64,11 @@ public enum MagicDescriptor {
 
     public static boolean isValidDescriptor(String text) {
         return null != convert(text);
+    }
+
+    public static List<MagicDescriptor> getValueListWithNull() {
+        List<MagicDescriptor> magicDescriptors = new ArrayList<>(Arrays.asList(values()));
+        magicDescriptors.add(0, null);
+        return magicDescriptors;
     }
 }

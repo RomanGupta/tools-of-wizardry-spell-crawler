@@ -10,9 +10,9 @@ import static de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSubschool.
 import static de.rge.tools.of.wizardry.spell.crawler.model.enums.Source.*;
 
 public class ExpectedNoOfSpellsPerSubschool {
-    private final Map<Source, Map<MagicSubschool, Integer>> expectedNoOfSpells = new HashMap<>();
+    private static final Map<Source, Map<MagicSubschool, Integer>> expectedNoOfSpells = new HashMap<>();
 
-    {
+    static {
         Map<MagicSubschool, Integer> coreRuleBook = new HashMap<>();
         coreRuleBook.put(null, 389);
         coreRuleBook.put(CALLING, 6);
@@ -86,11 +86,11 @@ public class ExpectedNoOfSpellsPerSubschool {
         expectedNoOfSpells.put(SPELLS_ULTIMATE_MAGIC, ultimateMagicMap);
     }
 
-    public int getExpectedNoOfSpells(Source source, MagicSubschool subschool) {
+    public static int getExpectedNoOfSpells(Source source, MagicSubschool subschool) {
         return expectedNoOfSpells.get(source).get(subschool);
     }
 
-    public Map<MagicSubschool, List<URL>> prepareResults(Source source) {
+    public static Map<MagicSubschool, List<URL>> prepareResults(Source source) {
         Map<MagicSubschool, List<URL>> results = new HashMap<>();
         expectedNoOfSpells.get(source).keySet().forEach(subschool -> results.putIfAbsent(subschool, new ArrayList<>()));
         return results;
