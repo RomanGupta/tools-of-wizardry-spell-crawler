@@ -14,7 +14,7 @@ import static de.rge.tools.of.wizardry.spell.crawler.model.enums.Source.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class SpellCrawlerTest {
+public class SpellCrawlerIntgTest {
 
     @Parameters
     public static Iterable<Object[]> params() {
@@ -137,7 +137,7 @@ public class SpellCrawlerTest {
 
     private SpellCrawler sut = new SpellCrawlerImpl();
 
-    public SpellCrawlerTest(Source source, String startingLetterPattern, int expectedNoOfSpells) {
+    public SpellCrawlerIntgTest(Source source, String startingLetterPattern, int expectedNoOfSpells) {
         this.source = source;
         this.startingLetterPattern = startingLetterPattern;
         this.expectedNoOfSpells = expectedNoOfSpells;
