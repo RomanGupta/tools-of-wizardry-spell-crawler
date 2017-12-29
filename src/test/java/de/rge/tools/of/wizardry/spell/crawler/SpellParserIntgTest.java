@@ -20,9 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -94,12 +92,11 @@ public class SpellParserIntgTest {
         }
     }
 
-
     private void assertNoOfExpectedSpells() {
-        MagicSchool.getValueListWithNull().forEach(this::assertNoOfExpectedSpells);
-        MagicSubschool.getValueListWithNull().forEach(this::assertNoOfExpectedSpells);
-        MagicDescriptor.getValueListWithNull().forEach(this::assertNoOfExpectedSpells);
-        MagicDescriptor.Connector.getValueListWithNull().forEach((this::assertNoOfExpectedSpells));
+        sortKeySet(schoolResults.keySet()).forEach(this::assertNoOfExpectedSpells);
+        sortKeySet(subschoolResults.keySet()).forEach(this::assertNoOfExpectedSpells);
+        sortKeySet(descriptorResults.keySet()).forEach(this::assertNoOfExpectedSpells);
+        sortKeySet(descriptorConnectorResults.keySet()).forEach((this::assertNoOfExpectedSpells));
         softAsserter.assertAll();
     }
 
@@ -125,5 +122,14 @@ public class SpellParserIntgTest {
         softAsserter.assertThat(descriptorConnectorResults.get(connector))
                 .as("source: " + source + "\tconnector: " + connector)
                 .hasSize(ExpectedNoOfSpellsPerDescriptor.getExpectedNoOfSpellsPerConnector(source, connector));
+    }
+
+    private <T extends Comparable> List<T> sortKeySet(Set<T> keySet) {
+        List<T> sortedList = keySet.stream()
+                .filter(Objects::nonNull)
+                .sorted()
+                .collect(Collectors.toList());
+        sortedList.add(0 , null);
+        return sortedList;
     }
 }

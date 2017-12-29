@@ -29,7 +29,7 @@ public enum MagicSubschool {
     }
 
     public static MagicSubschool convert(String text) {
-        if(null != text) {
+        if (null != text) {
             return Arrays.stream(values())
                     .filter(subschool -> subschool.name().equals(text.toUpperCase()))
                     .findAny()
@@ -37,15 +37,5 @@ public enum MagicSubschool {
         }
         return null;
 
-    }
-
-    public static boolean isValidSubschool(String text) {
-        return null != convert(text);
-    }
-
-    public static List<MagicSubschool> getValueListWithNull() {
-        List<MagicSubschool> magicSubschools = new ArrayList<>(Arrays.asList(values()));
-        magicSubschools.add(0, null);
-        return magicSubschools;
     }
 }

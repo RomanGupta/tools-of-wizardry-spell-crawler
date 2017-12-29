@@ -47,7 +47,7 @@ public enum MagicDescriptor {
 
 
     public static MagicDescriptor convert(String text) {
-        if(null != text) {
+        if (null != text) {
             String polished = text.toUpperCase().replaceAll("[- ]", "_");
             return Arrays.stream(values())
                     .filter(descriptor -> matchesDescriptor(descriptor, polished))
@@ -62,13 +62,4 @@ public enum MagicDescriptor {
         return descriptor.name().equals(polished) || (descriptor.equals(SEE_TEXT) && polished.startsWith(SEE_TEXT.name()));
     }
 
-    public static boolean isValidDescriptor(String text) {
-        return null != convert(text);
-    }
-
-    public static List<MagicDescriptor> getValueListWithNull() {
-        List<MagicDescriptor> magicDescriptors = new ArrayList<>(Arrays.asList(values()));
-        magicDescriptors.add(0, null);
-        return magicDescriptors;
-    }
 }
