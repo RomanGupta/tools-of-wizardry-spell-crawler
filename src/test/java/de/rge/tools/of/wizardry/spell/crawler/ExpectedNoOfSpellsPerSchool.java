@@ -67,10 +67,6 @@ public class ExpectedNoOfSpellsPerSchool {
         expectedNoOfSpells.put(SPELLS_ULTIMATE_MAGIC, ultimateMagicMap);
     }
 
-    public Set<Source> getSources(){
-        return expectedNoOfSpells.keySet();
-    }
-
     public int getExpectedNoOfSpells(Source source, MagicSchool school) {
         return expectedNoOfSpells.get(source).get(school);
     }

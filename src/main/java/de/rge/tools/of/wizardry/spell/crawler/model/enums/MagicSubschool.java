@@ -1,6 +1,8 @@
 package de.rge.tools.of.wizardry.spell.crawler.model.enums;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSchool.*;
 
@@ -39,5 +41,11 @@ public enum MagicSubschool {
 
     public static boolean isValidSubschool(String text) {
         return null != convert(text);
+    }
+
+    public static List<MagicSubschool> getValueListWithNull() {
+        List<MagicSubschool> magicSubschools = new ArrayList<>(Arrays.asList(values()));
+        magicSubschools.add(0, null);
+        return magicSubschools;
     }
 }

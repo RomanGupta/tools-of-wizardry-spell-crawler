@@ -6,6 +6,7 @@ import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellParserImpl;
 import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSchool;
+import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSubschool;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.Source;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
@@ -15,8 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RunWith(Parameterized.class)
@@ -24,15 +27,19 @@ public class SpellParserIntgTest {
     private static final Logger log = LoggerFactory.getLogger(SpellParserIntgTest.class);
 
     private static final ExpectedNoOfSpellsPerSchool EXPECTED_NO_OF_SPELLS_PER_SCHOOL = new ExpectedNoOfSpellsPerSchool();
+    private static final ExpectedNoOfSpellsPerSubschool EXPECTED_NO_OF_SPELLS_PER_SUBSCHOOL = new ExpectedNoOfSpellsPerSubschool();
+
     @Parameterized.Parameters
     public static Iterable<Object[]> params() {
-        return EXPECTED_NO_OF_SPELLS_PER_SCHOOL.getSources().stream()
+        return Arrays.stream(Source.values())
                 .map(source -> new Object[] {source})
                 .collect(Collectors.toList());
     }
 
     private final Source source;
     private final Map<MagicSchool, List<URL>> schoolResults;
+    private final Map<MagicSubschool, List<URL>> subschoolResults;
+    private final SoftAssertions softAsserter;
 
     private SpellParser sut = new SpellParserImpl();
 
@@ -41,6 +48,8 @@ public class SpellParserIntgTest {
     public SpellParserIntgTest(Source source) {
         this.source = source;
         this.schoolResults = EXPECTED_NO_OF_SPELLS_PER_SCHOOL.prepareResults(source);
+        this.subschoolResults = EXPECTED_NO_OF_SPELLS_PER_SUBSCHOOL.prepareResults(source);
+        this.softAsserter = new SoftAssertions();
     }
 
     @Test
@@ -62,23 +71,30 @@ public class SpellParserIntgTest {
     }
 
     private void addResult(URL spellUrl, Spell spell) {
-        schoolResults.get(nullSafe(spell)).add(spellUrl);
+        schoolResults.get(nullSafe(spell, Spell::getSchool)).add(spellUrl);
+        subschoolResults.get(nullSafe(spell, Spell::getSubschool)).add(spellUrl);
     }
 
-    private MagicSchool nullSafe(Spell spell) {
-        return spell == null ? null : spell.getSchool();
+    private <T> T nullSafe(Spell spell, Function<Spell, T> getter) {
+        return spell == null ? null : getter.apply(spell);
     }
 
 
     private void assertNoOfExpectedSpells() {
-        SoftAssertions softAsserter = new SoftAssertions();
-        schoolResults.forEach((school, list) -> assertNoOfExpectedSpells(softAsserter, school, list));
+        MagicSchool.getValueListWithNull().forEach(this::assertNoOfExpectedSpells);
+        MagicSubschool.getValueListWithNull().forEach(this::assertNoOfExpectedSpells);
         softAsserter.assertAll();
     }
 
-    private void assertNoOfExpectedSpells(SoftAssertions softAsserter, MagicSchool school, List<URL> spellUrls) {
-        softAsserter.assertThat(spellUrls)
+    private void assertNoOfExpectedSpells(MagicSchool school) {
+        softAsserter.assertThat(schoolResults.get(school))
                 .as("source: " + source + "\tschool: " + school)
                 .hasSize(EXPECTED_NO_OF_SPELLS_PER_SCHOOL.getExpectedNoOfSpells(source, school));
+    }
+
+    private void assertNoOfExpectedSpells(MagicSubschool subschool) {
+        softAsserter.assertThat(subschoolResults.get(subschool))
+                .as("source: " + source + "\tsubschool: " + subschool)
+                .hasSize(EXPECTED_NO_OF_SPELLS_PER_SUBSCHOOL.getExpectedNoOfSpells(source, subschool));
     }
 }
