@@ -2,16 +2,15 @@ package de.rge.tools.of.wizardry.spell.crawler;
 
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellCrawler;
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellParser;
+import de.rge.tools.of.wizardry.spell.crawler.expected.ExpectedNoOfSpellsPerClassAndLevel;
 import de.rge.tools.of.wizardry.spell.crawler.expected.ExpectedNoOfSpellsPerDescriptor;
 import de.rge.tools.of.wizardry.spell.crawler.expected.ExpectedNoOfSpellsPerSchool;
 import de.rge.tools.of.wizardry.spell.crawler.expected.ExpectedNoOfSpellsPerSubschool;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellParserImpl;
 import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
-import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicDescriptor;
-import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSchool;
-import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSubschool;
-import de.rge.tools.of.wizardry.spell.crawler.model.enums.Source;
+import de.rge.tools.of.wizardry.spell.crawler.model.enums.Class;
+import de.rge.tools.of.wizardry.spell.crawler.model.enums.*;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +39,7 @@ public class SpellParserIntgTest {
     private final Map<MagicSubschool, List<URL>> subschoolResults;
     private final Map<MagicDescriptor, List<URL>> descriptorResults;
     private final Map<MagicDescriptor.Connector, List<URL>> descriptorConnectorResults;
+    private final Map<Class, Map<Integer, List<URL>>> levelPerClassResults;
     private final SoftAssertions softAsserter;
 
     private SpellParser sut = new SpellParserImpl();
@@ -52,6 +52,7 @@ public class SpellParserIntgTest {
         this.subschoolResults = ExpectedNoOfSpellsPerSubschool.prepareResults(source);
         this.descriptorResults = ExpectedNoOfSpellsPerDescriptor.prepareResults(source);
         this.descriptorConnectorResults = ExpectedNoOfSpellsPerDescriptor.prepareResultsPerConnector(source);
+        this.levelPerClassResults = ExpectedNoOfSpellsPerClassAndLevel.prepareResults(source);
         this.softAsserter = new SoftAssertions();
     }
 
@@ -78,6 +79,7 @@ public class SpellParserIntgTest {
         subschoolResults.get(accessNullSafe(spell, Spell::getSubschool)).add(spellUrl);
         addListResult(descriptorResults, spellUrl, spell, Spell::getDescriptors);
         descriptorConnectorResults.get(accessNullSafe(spell, Spell::getDescriptorsConnector)).add(spellUrl);
+        addMapResult(levelPerClassResults, spellUrl, spell, Spell::getLevelPerClass);
     }
 
     private <T> T accessNullSafe(Spell spell, Function<Spell, T> getter) {
@@ -92,11 +94,21 @@ public class SpellParserIntgTest {
         }
     }
 
+    private <R, S> void addMapResult(final Map<R, Map<S, List<URL>>> results, URL spellUrl, Spell spell,  Function<Spell, Map<R, S>> getter) {
+        if(null == spell || getter.apply(spell).isEmpty()) {
+            results.get(null).get(null).add(spellUrl);
+        } else {
+            getter.apply(spell).forEach((key, value) -> results.get(key).get(value).add(spellUrl));
+        }
+    }
+
+
     private void assertNoOfExpectedSpells() {
         sortKeySet(schoolResults.keySet()).forEach(this::assertNoOfExpectedSpells);
         sortKeySet(subschoolResults.keySet()).forEach(this::assertNoOfExpectedSpells);
         sortKeySet(descriptorResults.keySet()).forEach(this::assertNoOfExpectedSpells);
         sortKeySet(descriptorConnectorResults.keySet()).forEach((this::assertNoOfExpectedSpells));
+        sortKeySet(levelPerClassResults.keySet()).forEach(this::assertNoOfExpectedSpells);
         softAsserter.assertAll();
     }
 
@@ -124,12 +136,24 @@ public class SpellParserIntgTest {
                 .hasSize(ExpectedNoOfSpellsPerDescriptor.getExpectedNoOfSpellsPerConnector(source, connector));
     }
 
+    private void assertNoOfExpectedSpells(Class clazz) {
+        sortKeySet(levelPerClassResults.get(clazz).keySet()).forEach(level -> assertNoOfExpectedSpells(clazz, level));
+    }
+
+    private void assertNoOfExpectedSpells(Class clazz, Integer level) {
+        softAsserter.assertThat(levelPerClassResults.get(clazz).get(level))
+                .as("source: " + source + "\tclazz: " + clazz + "\tlevel: " + level)
+                .hasSize(ExpectedNoOfSpellsPerClassAndLevel.getExpectedNoOfSpells(source, clazz, level));
+    }
+
     private <T extends Comparable> List<T> sortKeySet(Set<T> keySet) {
         List<T> sortedList = keySet.stream()
                 .filter(Objects::nonNull)
                 .sorted()
                 .collect(Collectors.toList());
-        sortedList.add(0 , null);
+        if (keySet.contains(null)) {
+            sortedList.add(0 , null);
+        }
         return sortedList;
     }
 }
