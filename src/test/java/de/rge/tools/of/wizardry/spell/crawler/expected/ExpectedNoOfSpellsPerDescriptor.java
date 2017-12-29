@@ -1,4 +1,4 @@
-package de.rge.tools.of.wizardry.spell.crawler;
+package de.rge.tools.of.wizardry.spell.crawler.expected;
 
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicDescriptor;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.Source;

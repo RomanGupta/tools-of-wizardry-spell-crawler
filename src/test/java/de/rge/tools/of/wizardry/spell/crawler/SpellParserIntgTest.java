@@ -2,6 +2,9 @@ package de.rge.tools.of.wizardry.spell.crawler;
 
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellCrawler;
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellParser;
+import de.rge.tools.of.wizardry.spell.crawler.expected.ExpectedNoOfSpellsPerDescriptor;
+import de.rge.tools.of.wizardry.spell.crawler.expected.ExpectedNoOfSpellsPerSchool;
+import de.rge.tools.of.wizardry.spell.crawler.expected.ExpectedNoOfSpellsPerSubschool;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellParserImpl;
 import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
