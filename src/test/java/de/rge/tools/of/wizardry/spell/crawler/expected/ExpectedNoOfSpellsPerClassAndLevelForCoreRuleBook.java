@@ -21,8 +21,8 @@ public class ExpectedNoOfSpellsPerClassAndLevelForCoreRuleBook implements Expect
         // Bard
         Map<Integer, Integer> expectedSpellsForBard = new HashMap<>();
         expectedSpellsForBard.put(0, 16);
-        expectedSpellsForBard.put(1, 25);
-        expectedSpellsForBard.put(2, 36);
+        expectedSpellsForBard.put(1, 26);
+        expectedSpellsForBard.put(2, 35);
         expectedSpellsForBard.put(3, 30);
         expectedSpellsForBard.put(4, 21);
         expectedSpellsForBard.put(5, 16);
@@ -31,8 +31,8 @@ public class ExpectedNoOfSpellsPerClassAndLevelForCoreRuleBook implements Expect
         // Cleric
         Map<Integer, Integer> expectedSpellsForCleric = new HashMap<>();
         expectedSpellsForCleric.put(0, 12);
-        expectedSpellsForCleric.put(1, 30);
-        expectedSpellsForCleric.put(2, 33);
+        expectedSpellsForCleric.put(1, 31);
+        expectedSpellsForCleric.put(2, 32);
         expectedSpellsForCleric.put(3, 34);
         expectedSpellsForCleric.put(4, 27);
         expectedSpellsForCleric.put(5, 28);
@@ -44,8 +44,8 @@ public class ExpectedNoOfSpellsPerClassAndLevelForCoreRuleBook implements Expect
         // Druid
         Map<Integer, Integer> expectedSpellsForDruid = new HashMap<>();
         expectedSpellsForDruid.put(0, 13);
-        expectedSpellsForDruid.put(1, 19);
-        expectedSpellsForDruid.put(2, 27);
+        expectedSpellsForDruid.put(1, 20);
+        expectedSpellsForDruid.put(2, 26);
         expectedSpellsForDruid.put(3, 22);
         expectedSpellsForDruid.put(4, 17);
         expectedSpellsForDruid.put(5, 19);
@@ -63,16 +63,16 @@ public class ExpectedNoOfSpellsPerClassAndLevelForCoreRuleBook implements Expect
         expectedNoOfSpells.put(PALADIN, expectedSpellsForPaladin);
         // Ranger
         Map<Integer, Integer> expectedSpellsForRanger = new HashMap<>();
-        expectedSpellsForRanger.put(1, 18);
-        expectedSpellsForRanger.put(2, 13);
+        expectedSpellsForRanger.put(1, 19);
+        expectedSpellsForRanger.put(2, 12);
         expectedSpellsForRanger.put(3, 13);
         expectedSpellsForRanger.put(4, 7);
         expectedNoOfSpells.put(RANGER, expectedSpellsForRanger);
         // Sorcerer
         Map<Integer, Integer> expectedSpellsForSorcerer = new HashMap<>();
         expectedSpellsForSorcerer.put(0, 20);
-        expectedSpellsForSorcerer.put(1, 41);
-        expectedSpellsForSorcerer.put(2, 52);
+        expectedSpellsForSorcerer.put(1, 42);
+        expectedSpellsForSorcerer.put(2, 51);
         expectedSpellsForSorcerer.put(3, 46);
         expectedSpellsForSorcerer.put(4, 41);
         expectedSpellsForSorcerer.put(5, 47);
@@ -84,8 +84,8 @@ public class ExpectedNoOfSpellsPerClassAndLevelForCoreRuleBook implements Expect
         // Wizard
         Map<Integer, Integer> expectedSpellsForWizard = new HashMap<>();
         expectedSpellsForWizard.put(0, 20);
-        expectedSpellsForWizard.put(1, 41);
-        expectedSpellsForWizard.put(2, 52);
+        expectedSpellsForWizard.put(1, 42);
+        expectedSpellsForWizard.put(2, 51);
         expectedSpellsForWizard.put(3, 46);
         expectedSpellsForWizard.put(4, 42);
         expectedSpellsForWizard.put(5, 47);

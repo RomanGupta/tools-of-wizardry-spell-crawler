@@ -19,7 +19,7 @@ public class ExpectedNoOfSpellsPerDescriptor {
 
     static {
         Map<MagicDescriptor, Integer> coreRuleBook = new HashMap<>();
-        coreRuleBook.put(null, 401);
+        coreRuleBook.put(null, 400);
         coreRuleBook.put(ACID, 3);
         coreRuleBook.put(AIR, 7);
         coreRuleBook.put(CHAOTIC, 6);
@@ -45,7 +45,7 @@ public class ExpectedNoOfSpellsPerDescriptor {
         coreRuleBook.put(PAIN, 0);
         coreRuleBook.put(POISON, 0);
         coreRuleBook.put(SHADOW, 0);
-        coreRuleBook.put(SEE_TEXT, 15);
+        coreRuleBook.put(SEE_TEXT, 16);
         expectedNoOfSpells.put(SPELLS_CORE_RULEBOOK, coreRuleBook);
 
         Map<MagicDescriptor, Integer> advancedClassGuideMap = new HashMap<>();

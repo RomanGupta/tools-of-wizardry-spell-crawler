@@ -10,13 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SpellParserImpl implements SpellParser {
     private static final Logger log = LoggerFactory.getLogger(SpellParserImpl.class);
+    private static final String TITLE_SELECTOR = "p[class^=stat-block-title]";
 
     private HtmlDocumentUtil htmlDocumentUtil = new HtmlDocumentUtil();
 
@@ -26,39 +24,32 @@ public class SpellParserImpl implements SpellParser {
 
     @Override
     public Spell parseSpell(URL spellUrl) {
-        if(!parsedSpells.containsKey(spellUrl)) {
+        if (!parsedSpells.containsKey(spellUrl)) {
             Document htmlDocument = htmlDocumentUtil.read(spellUrl);
-            Elements refParagraphs = getPrioritizedRefParagraphs(htmlDocument, spellUrl.getRef());
+            List<Element> refParagraphs = getSpellParagraphs(htmlDocument, spellUrl.getRef());
             parsedSpells.put(spellUrl, parseSpell(refParagraphs));
         }
         return parsedSpells.get(spellUrl);
     }
 
-    private Elements getPrioritizedRefParagraphs(Document htmlDocument, String targetReference) {
-        Elements refParagraphs = htmlDocument.select("p[class^=stat-block-title]");
-        if (null != targetReference) {
-            prioritizeTargetReference(refParagraphs, targetReference);
-        }
-        return refParagraphs;
+    private List<Element> getSpellParagraphs(Document htmlDocument, String targetReference) {
+        Elements titleParagraphs = htmlDocument.select(TITLE_SELECTOR);
+        Element primaryTitle = determinePrimary(titleParagraphs, targetReference);
+        return collectSpellParagraphs(primaryTitle);
     }
 
-    private void prioritizeTargetReference(final Elements refParagraphs, String targetReference) {
-        int index = indexOf(refParagraphs.eachAttr("id"), targetReference);
-        if (index >= 0) {
-            Element targetRefParagraph = refParagraphs.remove(index);
-            refParagraphs.add(0, targetRefParagraph);
+    private Element determinePrimary(final Elements titleParagraphs, String targetReference) {
+        if (1 == titleParagraphs.size() || null == targetReference) {
+            return titleParagraphs.first();
         }
+        return titleParagraphs.stream()
+                .filter(element -> isTitleWith(targetReference, element))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Couldn't determine primary title with reference: " + targetReference));
     }
 
-    private int indexOf(List<String> ids, String targetReference) {
-        for (String heuristicReference : widenReferenceMatches(targetReference)) {
-            int index = ids.indexOf(heuristicReference);
-            if (index >= 0) {
-                return index;
-            }
-        }
-        log.warn("Insufficient target reference or id: Can't find '" + targetReference + "' in " + ids);
-        return -1;
+    private boolean isTitleWith(String targetReference, Element element) {
+        return widenReferenceMatches(targetReference).contains(element.attr("id"));
     }
 
     private List<String> widenReferenceMatches(String targetReference) {
@@ -75,20 +66,37 @@ public class SpellParserImpl implements SpellParser {
 
     private void addHeuristicReference(final List<String> heuristicReferences, String targetReference,
                                        String potentialTypo, String replacement) {
-        if(targetReference.contains(potentialTypo)) {
+        if (targetReference.contains(potentialTypo)) {
             heuristicReferences.add(targetReference.replace(potentialTypo, replacement));
         }
     }
 
-    private Spell parseSpell(Elements refParagraphs) {
+    private List<Element> collectSpellParagraphs(Element primaryTitle) {
+        List<Element> spellParagraphs = new ArrayList<>();
+        spellParagraphs.add(primaryTitle);
+
+        Elements siblings = primaryTitle.siblingElements();
+        for(int siblingIndex = primaryTitle.elementSiblingIndex(); siblingIndex < siblings.size(); siblingIndex++) {
+            Element sibling = siblings.get(siblingIndex);
+            if(sibling.hasClass("stat-block-title")) {
+                break;
+            }
+            if(sibling.is("p")) {
+                spellParagraphs.add(sibling);
+            }
+        }
+        return spellParagraphs;
+    }
+
+    private Spell parseSpell(List<Element> spellParagraphs) {
         Spell spell = new Spell();
-        spell.setName(parseName(refParagraphs));
-        schoolParser.parseSchoolAndLevel(spell, refParagraphs);
+        spell.setName(parseName(spellParagraphs));
+        schoolParser.parseSchoolAndLevel(spell, spellParagraphs);
         return spell;
     }
 
-    private String parseName(Elements referencePoints) {
-        return referencePoints.first().text();
+    private String parseName(List<Element> referencePoints) {
+        return referencePoints.get(0).text();
     }
 
 }

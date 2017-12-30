@@ -5,7 +5,6 @@ import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicDescriptor;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSchool;
 import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSubschool;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +23,8 @@ public class SchoolParserImpl {
     private static final Pattern SCHOOL_DETAILS_PATTERN = Pattern.compile("^School\\s+(\\w+)\\s*(\\(\\w+\\))?\\s*(\\[[A-Za-z\\-, ]+\\])?");
     private static final Pattern DESCRIPTOR_CONNECTOR_OR_PATTERN = Pattern.compile("[, ]\\s*or ");
 
-    public void parseSchoolDetails(final Spell spell, Elements relevantParagraphs) {
-        Matcher matcher = findSchoolLine(relevantParagraphs);
+    public void parseSchoolDetails(final Spell spell, List<Element> spellParagraphs) {
+        Matcher matcher = findSchoolLine(spellParagraphs);
         MagicSchool potentialSchool = MagicSchool.convert(matcher.group(1));
         if (null != potentialSchool) {
             spell.setSchool(potentialSchool);
@@ -35,14 +34,14 @@ public class SchoolParserImpl {
         parseOptionalSchoolDetails(spell, matcher);
     }
 
-    private Matcher findSchoolLine(Elements relevantParagraphs) {
-        return relevantParagraphs.stream()
+    private Matcher findSchoolLine(List<Element> spellParagraphs) {
+        return spellParagraphs.stream()
                 .map(Element::text)
                 .map(SCHOOL_DETAILS_PATTERN::matcher)
                 .filter(Matcher::find)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Couldn't parse school details from" +
-                        " any paragraph: " + relevantParagraphs));
+                        " any paragraph: " + spellParagraphs));
     }
 
     private void parseOptionalSchoolDetails(final Spell spell, Matcher matcher) {

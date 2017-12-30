@@ -73,12 +73,12 @@ public class ExpectedNoOfSpellsPerClassAndLevelForUltimateMagic implements Expec
         expectedSpellsForSorcerer.put(0, 0);
         expectedSpellsForSorcerer.put(1, 19);
         expectedSpellsForSorcerer.put(2, 25);
-        expectedSpellsForSorcerer.put(3, 25);
+        expectedSpellsForSorcerer.put(3, 24);
         expectedSpellsForSorcerer.put(4, 23);
         expectedSpellsForSorcerer.put(5, 20);
         expectedSpellsForSorcerer.put(6, 15);
         expectedSpellsForSorcerer.put(7, 15);
-        expectedSpellsForSorcerer.put(8, 4);
+        expectedSpellsForSorcerer.put(8, 5);
         expectedSpellsForSorcerer.put(9, 10);
         expectedNoOfSpells.put(SORCERER, expectedSpellsForSorcerer);
         // Wizard
@@ -86,12 +86,12 @@ public class ExpectedNoOfSpellsPerClassAndLevelForUltimateMagic implements Expec
         expectedSpellsForWizard.put(0, 0);
         expectedSpellsForWizard.put(1, 19);
         expectedSpellsForWizard.put(2, 26);
-        expectedSpellsForWizard.put(3, 25);
+        expectedSpellsForWizard.put(3, 24);
         expectedSpellsForWizard.put(4, 23);
         expectedSpellsForWizard.put(5, 20);
         expectedSpellsForWizard.put(6, 15);
         expectedSpellsForWizard.put(7, 15);
-        expectedSpellsForWizard.put(8, 4);
+        expectedSpellsForWizard.put(8, 5);
         expectedSpellsForWizard.put(9, 10);
         expectedNoOfSpells.put(WIZARD, expectedSpellsForWizard);
         // Arcanist
@@ -177,7 +177,7 @@ public class ExpectedNoOfSpellsPerClassAndLevelForUltimateMagic implements Expec
         Map<Integer, Integer> expectedSpellsForAlchemist = new HashMap<>();
         expectedSpellsForAlchemist.put(1, 4);
         expectedSpellsForAlchemist.put(2, 5);
-        expectedSpellsForAlchemist.put(3, 8);
+        expectedSpellsForAlchemist.put(3, 7);
         expectedSpellsForAlchemist.put(4, 8);
         expectedSpellsForAlchemist.put(5, 4);
         expectedSpellsForAlchemist.put(6, 2);
@@ -233,7 +233,7 @@ public class ExpectedNoOfSpellsPerClassAndLevelForUltimateMagic implements Expec
         expectedSpellsForMagus.put(0, 0);
         expectedSpellsForMagus.put(1, 2);
         expectedSpellsForMagus.put(2, 3);
-        expectedSpellsForMagus.put(3, 5);
+        expectedSpellsForMagus.put(3, 4);
         expectedSpellsForMagus.put(4, 4);
         expectedSpellsForMagus.put(5, 5);
         expectedSpellsForMagus.put(6, 2);
