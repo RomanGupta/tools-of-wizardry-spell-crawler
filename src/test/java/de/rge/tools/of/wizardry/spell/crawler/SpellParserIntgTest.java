@@ -40,11 +40,12 @@ public class SpellParserIntgTest {
     private final Map<MagicDescriptor, List<URL>> descriptorResults;
     private final Map<MagicDescriptor.Connector, List<URL>> descriptorConnectorResults;
     private final Map<Class, Map<Integer, List<URL>>> levelPerClassResults;
+
+    private final SpellCrawler spellCrawler;
     private final SoftAssertions softAsserter;
 
     private SpellParser sut = new SpellParserImpl();
 
-    private SpellCrawler spellCrawler = new SpellCrawlerImpl();
 
     public SpellParserIntgTest(Source source) {
         this.source = source;
@@ -53,12 +54,13 @@ public class SpellParserIntgTest {
         this.descriptorResults = ExpectedNoOfSpellsPerDescriptor.prepareResults(source);
         this.descriptorConnectorResults = ExpectedNoOfSpellsPerDescriptor.prepareResultsPerConnector(source);
         this.levelPerClassResults = ExpectedNoOfSpellsPerClassAndLevel.prepareResults(source);
+        this.spellCrawler = new SpellCrawlerImpl(source.readSourceUrl());
         this.softAsserter = new SoftAssertions();
     }
 
     @Test
     public void parseSpell_allData() {
-        List<URL> spellUrls = spellCrawler.determineAllSpellUrls(source, "[A-Z]");
+        List<URL> spellUrls = spellCrawler.determineAllSpellUrls("[a-z]");
         spellUrls.forEach(this::parseSpell);
         assertNoOfExpectedSpells();
     }

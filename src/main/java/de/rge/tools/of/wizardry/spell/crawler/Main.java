@@ -16,10 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static de.rge.tools.of.wizardry.spell.crawler.model.enums.Source.SPELLS_CORE_RULEBOOK;
+
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    private SpellCrawler spellCrawler = new SpellCrawlerImpl();
+    private SpellCrawler spellCrawler = new SpellCrawlerImpl(SPELLS_CORE_RULEBOOK.readSourceUrl());
 
     private SpellParser spellParser = new SpellParserImpl();
 
@@ -31,7 +33,7 @@ public class Main {
     }
 
     private void run() {
-        List<URL> spellUrls = spellCrawler.determineAllSpellUrls(Source.SPELLS_ULTIMATE_MAGIC, "[A-Z]");
+        List<URL> spellUrls = spellCrawler.determineAllSpellUrls("[a-z]");
         System.out.println("found " + spellUrls.size() + " spells");
         spellUrls.forEach(this::printSpell);
         subschoolsForSpells.forEach((k, v) -> System.out.println(k + ":\n" + v));
@@ -40,13 +42,13 @@ public class Main {
     private void printSpell(URL spellUrl) {
         Spell spell = parseSpell(spellUrl);
         if (null != spell) {
-            log.info("spell url: {}", spellUrl);
-            log.info("spell name: {}", spell.getName());
-            log.info("spell school: {}", spell.getSchool());
-            log.info("spell subschool: {}", spell.getSubschool());
-            log.info("spell descriptors: {}", spell.getDescriptors());
-            log.info("spell descriptors connector: {}", spell.getDescriptorsConnector());
-            log.info("spell level per class: {}", spell.getLevelPerClass());
+//            log.info("spell url: {}", spellUrl);
+//            log.info("spell name: {}", spell.getName());
+//            log.info("spell school: {}", spell.getSchool());
+//            log.info("spell subschool: {}", spell.getSubschool());
+//            log.info("spell descriptors: {}", spell.getDescriptors());
+//            log.info("spell descriptors connector: {}", spell.getDescriptorsConnector());
+//            log.info("spell level per class: {}", spell.getLevelPerClass());
 
             subschoolsForSpells.putIfAbsent(spell.getSubschool(), new ArrayList<>());
             subschoolsForSpells.get(spell.getSubschool()).add(spellUrl);

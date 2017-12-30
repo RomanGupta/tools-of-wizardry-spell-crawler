@@ -10,7 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SpellParserImpl implements SpellParser {
     private static final Logger log = LoggerFactory.getLogger(SpellParserImpl.class);
@@ -18,7 +22,8 @@ public class SpellParserImpl implements SpellParser {
 
     private HtmlDocumentUtil htmlDocumentUtil = new HtmlDocumentUtil();
 
-    private SchoolAndLevelParserImpl schoolParser = new SchoolAndLevelParserImpl();
+    private SchoolParserImpl schoolParser = new SchoolParserImpl();
+    private LevelParserImpl levelParser = new LevelParserImpl();
 
     private Map<URL, Spell> parsedSpells = new HashMap<>();
 
@@ -26,13 +31,14 @@ public class SpellParserImpl implements SpellParser {
     public Spell parseSpell(URL spellUrl) {
         if (!parsedSpells.containsKey(spellUrl)) {
             Document htmlDocument = htmlDocumentUtil.read(spellUrl);
-            List<Element> refParagraphs = getSpellParagraphs(htmlDocument, spellUrl.getRef());
-            parsedSpells.put(spellUrl, parseSpell(refParagraphs));
+            List<Element> spellParagraphs = determineSpellParagraphs(htmlDocument, spellUrl.getRef());
+            List<URL> spellReferences = parseSpellReferences(spellParagraphs, spellUrl);
+            parsedSpells.put(spellUrl, parseSpell(new SpellContext(parsedSpells, spellParagraphs, spellReferences)));
         }
         return parsedSpells.get(spellUrl);
     }
 
-    private List<Element> getSpellParagraphs(Document htmlDocument, String targetReference) {
+    private List<Element> determineSpellParagraphs(Document htmlDocument, String targetReference) {
         Elements titleParagraphs = htmlDocument.select(TITLE_SELECTOR);
         Element primaryTitle = determinePrimary(titleParagraphs, targetReference);
         return collectSpellParagraphs(primaryTitle);
@@ -88,15 +94,22 @@ public class SpellParserImpl implements SpellParser {
         return spellParagraphs;
     }
 
-    private Spell parseSpell(List<Element> spellParagraphs) {
-        Spell spell = new Spell();
-        spell.setName(parseName(spellParagraphs));
-        schoolParser.parseSchoolAndLevel(spell, spellParagraphs);
-        return spell;
+    private List<URL> parseSpellReferences(List<Element> spellParagraphs, URL spellUrl) {
+        Elements spellLinks = spellParagraphs.stream()
+                .flatMap(element -> element.select("a[href~=(^#|spells/)]").stream())
+                .collect(Collectors.toCollection(Elements::new));
+        return new SpellCrawlerImpl(spellUrl).convertToUrls(spellLinks);
     }
 
-    private String parseName(List<Element> referencePoints) {
-        return referencePoints.get(0).text();
+    private Spell parseSpell(SpellContext spellContext) {
+        spellContext.getSpell().setName(parseName(spellContext.getSpellParagraphs()));
+        schoolParser.parseSchoolDetails(spellContext.getSpell(), spellContext.getSpellParagraphs());
+        levelParser.parseLevelDetails(spellContext.getSpell(), spellContext.getSpellParagraphs());
+        return spellContext.getSpell();
+    }
+
+    private String parseName(List<Element> spellParagraphs) {
+        return spellParagraphs.get(0).text();
     }
 
 }

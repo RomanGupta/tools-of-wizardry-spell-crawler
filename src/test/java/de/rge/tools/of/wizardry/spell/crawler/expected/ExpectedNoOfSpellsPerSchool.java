@@ -31,7 +31,7 @@ public class ExpectedNoOfSpellsPerSchool {
         Map<MagicSchool, Integer> advancedClassGuideMap = new HashMap<>();
         advancedClassGuideMap.put(null, 1);
         advancedClassGuideMap.put(ABJURATION, 18);
-        advancedClassGuideMap.put(CONJURATION, 19);
+        advancedClassGuideMap.put(CONJURATION, 18);
         advancedClassGuideMap.put(DIVINATION, 9);
         advancedClassGuideMap.put(ENCHANTMENT, 8);
         advancedClassGuideMap.put(EVOCATION, 14);

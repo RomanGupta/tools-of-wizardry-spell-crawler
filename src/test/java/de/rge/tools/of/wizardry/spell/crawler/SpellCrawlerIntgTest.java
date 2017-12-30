@@ -62,7 +62,7 @@ public class SpellCrawlerIntgTest {
                         {SPELLS_ADVANCED_CLASS_GUIDE, "[m]", 12},
                         {SPELLS_ADVANCED_CLASS_GUIDE, "[n]", 2},
                         {SPELLS_ADVANCED_CLASS_GUIDE, "[o]", 0},
-                        {SPELLS_ADVANCED_CLASS_GUIDE, "[p]", 7},
+                        {SPELLS_ADVANCED_CLASS_GUIDE, "[p]", 6},
                         {SPELLS_ADVANCED_CLASS_GUIDE, "[q]", 0},
                         {SPELLS_ADVANCED_CLASS_GUIDE, "[r]", 4},
                         {SPELLS_ADVANCED_CLASS_GUIDE, "[s]", 20},
@@ -135,17 +135,19 @@ public class SpellCrawlerIntgTest {
     private final String startingLetterPattern;
     private final int expectedNoOfSpells;
 
-    private SpellCrawler sut = new SpellCrawlerImpl();
+    private final SpellCrawler sut;
 
     public SpellCrawlerIntgTest(Source source, String startingLetterPattern, int expectedNoOfSpells) {
         this.source = source;
         this.startingLetterPattern = startingLetterPattern;
         this.expectedNoOfSpells = expectedNoOfSpells;
+
+        sut = new SpellCrawlerImpl(source.readSourceUrl());
     }
 
     @Test
-    public void determineAllSpellUrls_coreRuleBook_startingLettersAToZ() {
-        assertThat(sut.determineAllSpellUrls(source, startingLetterPattern))
+    public void determineAllSpellUrls_startingLettersAToZ() {
+        assertThat(sut.determineAllSpellUrls(startingLetterPattern))
                 .as(source.name() + " at " + startingLetterPattern)
                 .hasSize(expectedNoOfSpells);
     }

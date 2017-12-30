@@ -49,7 +49,7 @@ public class ExpectedNoOfSpellsPerDescriptor {
         expectedNoOfSpells.put(SPELLS_CORE_RULEBOOK, coreRuleBook);
 
         Map<MagicDescriptor, Integer> advancedClassGuideMap = new HashMap<>();
-        advancedClassGuideMap.put(null, 83);
+        advancedClassGuideMap.put(null, 82);
         advancedClassGuideMap.put(ACID, 1);
         advancedClassGuideMap.put(AIR, 2);
         advancedClassGuideMap.put(CHAOTIC, 0);
@@ -150,7 +150,7 @@ public class ExpectedNoOfSpellsPerDescriptor {
 
         Map<MagicDescriptor.Connector, Integer> advancedClassGuideMap = new HashMap<>();
         advancedClassGuideMap.put(null, 1);
-        advancedClassGuideMap.put(AND, 131);
+        advancedClassGuideMap.put(AND, 130);
         advancedClassGuideMap.put(OR, 0);
         expectedNoOfSpellsPerConnector.put(SPELLS_ADVANCED_CLASS_GUIDE, advancedClassGuideMap);
 

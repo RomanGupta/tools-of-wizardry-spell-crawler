@@ -22,7 +22,7 @@ public class ExpectedNoOfSpellsPerClassAndLevelForAdvancedClassGuide implements 
         Map<Integer, Integer> expectedSpellsForBard = new HashMap<>();
         expectedSpellsForBard.put(0, 0);
         expectedSpellsForBard.put(1, 8);
-        expectedSpellsForBard.put(2, 15);
+        expectedSpellsForBard.put(2, 14);
         expectedSpellsForBard.put(3, 6);
         expectedSpellsForBard.put(4, 4);
         expectedSpellsForBard.put(5, 1);
@@ -32,7 +32,7 @@ public class ExpectedNoOfSpellsPerClassAndLevelForAdvancedClassGuide implements 
         Map<Integer, Integer> expectedSpellsForCleric = new HashMap<>();
         expectedSpellsForCleric.put(0, 0);
         expectedSpellsForCleric.put(1, 3);
-        expectedSpellsForCleric.put(2, 11);
+        expectedSpellsForCleric.put(2, 10);
         expectedSpellsForCleric.put(3, 5);
         expectedSpellsForCleric.put(4, 7);
         expectedSpellsForCleric.put(5, 2);

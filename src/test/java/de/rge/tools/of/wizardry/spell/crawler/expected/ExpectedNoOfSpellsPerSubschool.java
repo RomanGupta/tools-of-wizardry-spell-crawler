@@ -35,7 +35,7 @@ public class ExpectedNoOfSpellsPerSubschool {
         advancedClassGuideMap.put(null, 93);
         advancedClassGuideMap.put(CALLING, 0);
         advancedClassGuideMap.put(CREATION, 13);
-        advancedClassGuideMap.put(HEALING, 2);
+        advancedClassGuideMap.put(HEALING, 1);
         advancedClassGuideMap.put(SUMMONING, 3);
         advancedClassGuideMap.put(TELEPORTATION, 1);
         advancedClassGuideMap.put(SCRYING, 0);
