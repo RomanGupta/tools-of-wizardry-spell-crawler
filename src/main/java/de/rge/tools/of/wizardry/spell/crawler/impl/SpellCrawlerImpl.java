@@ -26,7 +26,7 @@ public class SpellCrawlerImpl implements SpellCrawler {
     public List<URL> determineAllSpellUrls(Source source, String startingLetterPattern) {
         sourceUrl = readSourceUrl(source);
         Document htmlDocument = htmlDocumentUtil.read(sourceUrl);
-        Elements links = htmlDocument.select("ul[title~=" + startingLetterPattern + " Spells] a[href]");
+        Elements links = htmlDocument.select("ul[id^=index-spells] a[href~=spells/" + startingLetterPattern + "]");
         return links.stream()
                 .map(this::extractLink)
                 .map(this::mapToUrl)
@@ -49,8 +49,7 @@ public class SpellCrawlerImpl implements SpellCrawler {
     }
 
     private boolean isValidSpellUrl(URL link) {
-        String externalForm = link.toExternalForm();
-        return externalForm.contains("spells/") && !UrlMarker.isIgnored(externalForm);
+        return !UrlMarker.isIgnored(link.toExternalForm());
     }
 
     private URL mapToUrl(String link) {
