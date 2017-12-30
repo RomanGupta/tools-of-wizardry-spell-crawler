@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SpellParserImpl implements SpellParser {
     private static final Logger log = LoggerFactory.getLogger(SpellParserImpl.class);
@@ -20,11 +22,16 @@ public class SpellParserImpl implements SpellParser {
 
     private SchoolAndLevelParserImpl schoolParser = new SchoolAndLevelParserImpl();
 
+    private Map<URL, Spell> parsedSpells = new HashMap<>();
+
     @Override
     public Spell parseSpell(URL spellUrl) {
-        Document htmlDocument = htmlDocumentUtil.read(spellUrl);
-        Elements refParagraphs = getPrioritizedRefParagraphs(htmlDocument, spellUrl.getRef());
-        return parseSpell(refParagraphs);
+        if(!parsedSpells.containsKey(spellUrl)) {
+            Document htmlDocument = htmlDocumentUtil.read(spellUrl);
+            Elements refParagraphs = getPrioritizedRefParagraphs(htmlDocument, spellUrl.getRef());
+            parsedSpells.put(spellUrl, parseSpell(refParagraphs));
+        }
+        return parsedSpells.get(spellUrl);
     }
 
     private Elements getPrioritizedRefParagraphs(Document htmlDocument, String targetReference) {
