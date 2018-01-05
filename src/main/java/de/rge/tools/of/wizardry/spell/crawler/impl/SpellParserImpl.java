@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SpellParserImpl implements SpellParser {
@@ -25,22 +22,31 @@ public class SpellParserImpl implements SpellParser {
     private SchoolParserImpl schoolParser = new SchoolParserImpl();
     private LevelParserImpl levelParser = new LevelParserImpl();
 
-    private Map<URL, Spell> parsedSpells = new HashMap<>();
+    private Map<URL, SpellContext> parsedSpells = new HashMap<>();
+
+    // memorize places where you have been so you don't get stuckin an recursive endless loop
+    private List<URL> urlMemory;
 
     @Override
     public Spell parseSpell(URL spellUrl) {
+        urlMemory = new ArrayList<>(Collections.singletonList(spellUrl));
+        return parseSpellContext(spellUrl).getSpell();
+    }
+
+    private SpellContext parseSpellContext(URL spellUrl) {
+        log.info("parsing spell context for spell url: {}", spellUrl);
         if (!parsedSpells.containsKey(spellUrl)) {
-            Document htmlDocument = htmlDocumentUtil.read(spellUrl);
-            List<Element> spellParagraphs = determineSpellParagraphs(htmlDocument, spellUrl.getRef());
-            List<URL> spellReferences = parseSpellReferences(spellParagraphs, spellUrl);
-            parsedSpells.put(spellUrl, parseSpell(new SpellContext(parsedSpells, spellParagraphs, spellReferences)));
+            List<Element> spellParagraphs = determineSpellParagraphs(spellUrl);
+            List<SpellContext> spellReferences = parseSpellReferences(spellParagraphs, spellUrl);
+            parsedSpells.put(spellUrl, parseSpellContext(new SpellContext(spellParagraphs, spellReferences)));
         }
         return parsedSpells.get(spellUrl);
     }
 
-    private List<Element> determineSpellParagraphs(Document htmlDocument, String targetReference) {
+    private List<Element> determineSpellParagraphs(URL spellUrl) {
+        Document htmlDocument = htmlDocumentUtil.read(spellUrl);
         Elements titleParagraphs = htmlDocument.select(TITLE_SELECTOR);
-        Element primaryTitle = determinePrimary(titleParagraphs, targetReference);
+        Element primaryTitle = determinePrimary(titleParagraphs, spellUrl.getRef());
         return collectSpellParagraphs(primaryTitle);
     }
 
@@ -94,18 +100,30 @@ public class SpellParserImpl implements SpellParser {
         return spellParagraphs;
     }
 
-    private List<URL> parseSpellReferences(List<Element> spellParagraphs, URL spellUrl) {
+    private List<SpellContext> parseSpellReferences(List<Element> spellParagraphs, URL spellUrl) {
+        log.info("parsing spell references for spell url: {}", spellUrl);
         Elements spellLinks = spellParagraphs.stream()
                 .flatMap(element -> element.select("a[href~=(^#|spells/)]").stream())
                 .collect(Collectors.toCollection(Elements::new));
-        return new SpellCrawlerImpl(spellUrl).convertToUrls(spellLinks);
+        return new SpellCrawlerImpl(spellUrl).convertToUrls(spellLinks).stream()
+                .filter(this::isNotRecursiveReference)
+                .map(this::parseSpellContext)
+                .collect(Collectors.toList());
     }
 
-    private Spell parseSpell(SpellContext spellContext) {
+    private boolean isNotRecursiveReference(URL url) {
+        if(urlMemory.contains(url)) {
+            return false;
+        }
+        urlMemory.add(url);
+        return true;
+    }
+
+    private SpellContext parseSpellContext(SpellContext spellContext) {
         spellContext.getSpell().setName(parseName(spellContext.getSpellParagraphs()));
         schoolParser.parseSchoolDetails(spellContext.getSpell(), spellContext.getSpellParagraphs());
         levelParser.parseLevelDetails(spellContext.getSpell(), spellContext.getSpellParagraphs());
-        return spellContext.getSpell();
+        return spellContext;
     }
 
     private String parseName(List<Element> spellParagraphs) {
