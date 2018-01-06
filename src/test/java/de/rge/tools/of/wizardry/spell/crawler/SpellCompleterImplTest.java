@@ -27,6 +27,7 @@ public class SpellCompleterImplTest {
         new SpellCompleterImpl(target).completeSpellWithReferences();
         assertCompletedSpell(target.getSpell());
     }
+
     @Test
     public void completeSpellWithReferences_firstReference(){
         SpellContext spellReference = createCompleteSpell(SPELL_NAME_FIRE_SHIELD);

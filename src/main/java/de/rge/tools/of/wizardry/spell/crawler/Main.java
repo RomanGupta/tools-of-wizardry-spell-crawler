@@ -5,8 +5,6 @@ import de.rge.tools.of.wizardry.spell.crawler.api.SpellParser;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellCrawlerImpl;
 import de.rge.tools.of.wizardry.spell.crawler.impl.SpellParserImpl;
 import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
-import de.rge.tools.of.wizardry.spell.crawler.model.enums.MagicSubschool;
-import de.rge.tools.of.wizardry.spell.crawler.model.enums.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,16 +14,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static de.rge.tools.of.wizardry.spell.crawler.model.enums.Source.SPELLS_CORE_RULEBOOK;
+import static de.rge.tools.of.wizardry.spell.crawler.model.enums.Source.SPELLS_ULTIMATE_MAGIC;
 
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    private SpellCrawler spellCrawler = new SpellCrawlerImpl(SPELLS_CORE_RULEBOOK.readSourceUrl());
+    private SpellCrawler spellCrawler = new SpellCrawlerImpl(SPELLS_ULTIMATE_MAGIC.readSourceUrl());
 
     private SpellParser spellParser = new SpellParserImpl();
 
-    private Map<MagicSubschool, List<URL>> subschoolsForSpells = new HashMap<>();
+    private Map<String, List<URL>> castingTimesForSpells = new HashMap<>();
 
 
     public static void main(String... args) {
@@ -36,7 +34,7 @@ public class Main {
         List<URL> spellUrls = spellCrawler.determineAllSpellUrls("[a-z]");
         System.out.println("found " + spellUrls.size() + " spells");
         spellUrls.forEach(this::printSpell);
-        subschoolsForSpells.forEach((k, v) -> System.out.println(k + ":\n" + v));
+        castingTimesForSpells.forEach((k, v) -> System.out.println(k + ":\n" + v));
     }
 
     private void printSpell(URL spellUrl) {
@@ -50,8 +48,8 @@ public class Main {
 //            log.info("spell descriptors connector: {}", spell.getDescriptorsConnector());
 //            log.info("spell level per class: {}", spell.getLevelPerClass());
 
-            subschoolsForSpells.putIfAbsent(spell.getSubschool(), new ArrayList<>());
-            subschoolsForSpells.get(spell.getSubschool()).add(spellUrl);
+            castingTimesForSpells.putIfAbsent(spell.getCastingTime(), new ArrayList<>());
+            castingTimesForSpells.get(spell.getCastingTime()).add(spellUrl);
         }
     }
 

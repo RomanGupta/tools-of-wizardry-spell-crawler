@@ -29,6 +29,7 @@ public class SpellCompleterImpl {
         // never set the name
         completeSchoolDetails(spellReference.getSpell());
         completeLevelDetails(spellReference.getSpell());
+        completeCastingTime(spellReference.getSpell());
     }
 
     private void completeSchoolDetails(Spell spellReference) {
@@ -47,4 +48,13 @@ public class SpellCompleterImpl {
             spellReference.getLevelPerClass().forEach(spell::addLevelPerClass);
         }
     }
+
+    private void completeCastingTime(Spell spellReference) {
+        Spell spell = target.getSpell();
+        if(null == spell.getCastingTime()) {
+            spell.setCastingTime(spellReference.getCastingTime());
+        }
+    }
+
+
 }

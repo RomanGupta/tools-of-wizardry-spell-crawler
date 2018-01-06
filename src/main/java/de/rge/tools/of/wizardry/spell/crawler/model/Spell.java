@@ -22,6 +22,8 @@ public class Spell {
 
     private Map<Class, Integer> levelPerClass = new HashMap<>();
 
+    private String castingTime;
+
     public String getName() {
         return name;
     }
@@ -70,13 +72,22 @@ public class Spell {
         this.levelPerClass.put(clazz, level);
     }
 
-    public String toString() {
-        return this.name + ":" + this.school;
+    public String getCastingTime() {
+        return castingTime;
+    }
+
+    public void setCastingTime(String castingTime) {
+        this.castingTime = castingTime;
     }
 
     public boolean isComplete() {
         return null != name
                 && null != school
-                && !levelPerClass.isEmpty();
+                && !levelPerClass.isEmpty()
+                && null != castingTime;
+    }
+
+    public String toString() {
+        return this.name + ":" + this.school;
     }
 }

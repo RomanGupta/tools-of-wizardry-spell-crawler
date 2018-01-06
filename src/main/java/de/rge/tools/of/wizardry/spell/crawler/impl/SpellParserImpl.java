@@ -21,6 +21,7 @@ public class SpellParserImpl implements SpellParser {
 
     private SchoolParserImpl schoolParser = new SchoolParserImpl();
     private LevelParserImpl levelParser = new LevelParserImpl();
+    private CastingTimeParserImpl castingTimeParser = new CastingTimeParserImpl();
 
     private Map<URL, SpellContext> parsedSpells = new HashMap<>();
 
@@ -37,8 +38,9 @@ public class SpellParserImpl implements SpellParser {
         log.info("parsing spell context for spell url: {}", spellUrl);
         if (!parsedSpells.containsKey(spellUrl)) {
             List<Element> spellParagraphs = determineSpellParagraphs(spellUrl);
-            List<SpellContext> spellReferences = parseSpellReferences(spellParagraphs, spellUrl);
-            parsedSpells.put(spellUrl, parseSpellContext(new SpellContext(spellParagraphs, spellReferences)));
+            SpellContext spellReference = parseSpellReference(spellParagraphs, spellUrl);
+            parsedSpells.put(spellUrl, parseSpellContext(new SpellContext(spellParagraphs,
+                    null == spellReference ? Collections.emptyList() : Collections.singletonList(spellReference))));
         }
         return parsedSpells.get(spellUrl);
     }
@@ -100,15 +102,24 @@ public class SpellParserImpl implements SpellParser {
         return spellParagraphs;
     }
 
-    private List<SpellContext> parseSpellReferences(List<Element> spellParagraphs, URL spellUrl) {
+    private SpellContext parseSpellReference(List<Element> spellParagraphs, URL spellUrl) {
         log.info("parsing spell references for spell url: {}", spellUrl);
-        Elements spellLinks = spellParagraphs.stream()
-                .flatMap(element -> element.select("a[href~=(^#|spells/)]").stream())
-                .collect(Collectors.toCollection(Elements::new));
+        Elements spellLinks = collectAllLinks(spellParagraphs);
         return new SpellCrawlerImpl(spellUrl).convertToUrls(spellLinks).stream()
-                .filter(this::isNotRecursiveReference)
+                .filter(this::isValidSpellUrl)
                 .map(this::parseSpellContext)
-                .collect(Collectors.toList());
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Elements collectAllLinks(List<Element> spellParagraphs) {
+        return spellParagraphs.stream()
+                .flatMap(element -> element.select("a[href]").stream())
+                .collect(Collectors.toCollection(Elements::new));
+    }
+
+    private boolean isValidSpellUrl(URL url) {
+        return url.toExternalForm().contains("/spells/") && isNotRecursiveReference(url);
     }
 
     private boolean isNotRecursiveReference(URL url) {
@@ -121,22 +132,11 @@ public class SpellParserImpl implements SpellParser {
 
     private SpellContext parseSpellContext(SpellContext spellContext) {
         spellContext.getSpell().setName(parseName(spellContext.getSpellParagraphs()));
-        parseSchool(spellContext);
-        parseLevelDetails(spellContext);
+        schoolParser.parseSchoolDetails(spellContext);
+        levelParser.parseLevelDetails(spellContext);
+        castingTimeParser.parseCastingTime(spellContext);
         new SpellCompleterImpl(spellContext).completeSpellWithReferences();
         return spellContext;
-    }
-
-    private void parseSchool(SpellContext spellContext) {
-        if (null == spellContext.getSpell().getSchool()) {
-            schoolParser.parseSchoolDetails(spellContext);
-        }
-    }
-
-    private void parseLevelDetails(SpellContext spellContext) {
-        if (spellContext.getSpell().getLevelPerClass().isEmpty()) {
-            levelParser.parseLevelDetails(spellContext);
-        }
     }
 
     private String parseName(List<Element> spellParagraphs) {
