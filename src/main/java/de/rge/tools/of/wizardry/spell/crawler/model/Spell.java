@@ -73,4 +73,10 @@ public class Spell {
     public String toString() {
         return this.name + ":" + this.school;
     }
+
+    public boolean isComplete() {
+        return null != name
+                && null != school
+                && !levelPerClass.isEmpty();
+    }
 }

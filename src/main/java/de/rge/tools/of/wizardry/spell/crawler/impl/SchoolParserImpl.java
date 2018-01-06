@@ -23,15 +23,12 @@ public class SchoolParserImpl {
     private static final Pattern SCHOOL_DETAILS_PATTERN = Pattern.compile("^School\\s+(\\w+)\\s*(\\(\\w+\\))?\\s*(\\[[A-Za-z\\-, ]+\\])?");
     private static final Pattern DESCRIPTOR_CONNECTOR_OR_PATTERN = Pattern.compile("[, ]\\s*or ");
 
-    public void parseSchoolDetails(final Spell spell, List<Element> spellParagraphs) {
-        Matcher matcher = findSchoolLine(spellParagraphs);
-        MagicSchool potentialSchool = MagicSchool.convert(matcher.group(1));
-        if (null != potentialSchool) {
-            spell.setSchool(potentialSchool);
-        } else {
-            throw new IllegalArgumentException("Couldn't parse school from " + matcher.group(1));
+    public void parseSchoolDetails(final SpellContext spellContext) {
+        Matcher matcher = findSchoolLine(spellContext.getSpellParagraphs());
+        if(null != matcher) {
+            parseSchool(matcher, spellContext.getSpell());
+            parseOptionalSchoolDetails(spellContext.getSpell(), matcher);
         }
-        parseOptionalSchoolDetails(spell, matcher);
     }
 
     private Matcher findSchoolLine(List<Element> spellParagraphs) {
@@ -40,8 +37,16 @@ public class SchoolParserImpl {
                 .map(SCHOOL_DETAILS_PATTERN::matcher)
                 .filter(Matcher::find)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Couldn't parse school details from" +
-                        " any paragraph: " + spellParagraphs));
+                .orElse(null);
+    }
+
+    private void parseSchool(Matcher matcher, Spell spell) {
+        MagicSchool potentialSchool = MagicSchool.convert(matcher.group(1));
+        if (null != potentialSchool) {
+            spell.setSchool(potentialSchool);
+        } else {
+            throw new IllegalArgumentException("Couldn't parse school from " + matcher.group(1));
+        }
     }
 
     private void parseOptionalSchoolDetails(final Spell spell, Matcher matcher) {

@@ -11,10 +11,12 @@ import java.util.regex.Pattern;
 public class LevelParserImpl {
     private static final Pattern LEVEL_DETAILS_PATTERN = Pattern.compile("Level:?\\s+([A-Za-z/]+\\s+\\d(,\\s*[A-Za-z/]+\\s+\\d)*)");
 
-    public void parseLevelDetails(final Spell spell, List<Element> spellParagraphs) {
-        Matcher matcher = findLevelLine(spellParagraphs);
-        for (String classAndLevelPair : matcher.group(1).split(",\\s+")) {
-            addClassPerLevel(spell, classAndLevelPair);
+    public void parseLevelDetails(final SpellContext spellContext) {
+        Matcher matcher = findLevelLine(spellContext.getSpellParagraphs());
+        if (null != matcher) {
+            for (String classAndLevelPair : matcher.group(1).split(",\\s+")) {
+                addClassPerLevel(spellContext.getSpell(), classAndLevelPair);
+            }
         }
     }
 
@@ -24,8 +26,7 @@ public class LevelParserImpl {
                 .map(LEVEL_DETAILS_PATTERN::matcher)
                 .filter(Matcher::find)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Couldn't parse class and level details " +
-                        "from any paragraph: " + spellParagraphs));
+                .orElse(null);
     }
 
     private void addClassPerLevel(final Spell spell, String classAndLevelPair) {

@@ -88,12 +88,12 @@ public class SpellParserImpl implements SpellParser {
         spellParagraphs.add(primaryTitle);
 
         Elements siblings = primaryTitle.siblingElements();
-        for(int siblingIndex = primaryTitle.elementSiblingIndex(); siblingIndex < siblings.size(); siblingIndex++) {
+        for (int siblingIndex = primaryTitle.elementSiblingIndex(); siblingIndex < siblings.size(); siblingIndex++) {
             Element sibling = siblings.get(siblingIndex);
-            if(sibling.hasClass("stat-block-title")) {
+            if (sibling.hasClass("stat-block-title")) {
                 break;
             }
-            if(sibling.is("p")) {
+            if (sibling.is("p")) {
                 spellParagraphs.add(sibling);
             }
         }
@@ -112,7 +112,7 @@ public class SpellParserImpl implements SpellParser {
     }
 
     private boolean isNotRecursiveReference(URL url) {
-        if(urlMemory.contains(url)) {
+        if (urlMemory.contains(url)) {
             return false;
         }
         urlMemory.add(url);
@@ -121,9 +121,22 @@ public class SpellParserImpl implements SpellParser {
 
     private SpellContext parseSpellContext(SpellContext spellContext) {
         spellContext.getSpell().setName(parseName(spellContext.getSpellParagraphs()));
-        schoolParser.parseSchoolDetails(spellContext.getSpell(), spellContext.getSpellParagraphs());
-        levelParser.parseLevelDetails(spellContext.getSpell(), spellContext.getSpellParagraphs());
+        parseSchool(spellContext);
+        parseLevelDetails(spellContext);
+        new SpellCompleterImpl(spellContext).completeSpellWithReferences();
         return spellContext;
+    }
+
+    private void parseSchool(SpellContext spellContext) {
+        if (null == spellContext.getSpell().getSchool()) {
+            schoolParser.parseSchoolDetails(spellContext);
+        }
+    }
+
+    private void parseLevelDetails(SpellContext spellContext) {
+        if (spellContext.getSpell().getLevelPerClass().isEmpty()) {
+            levelParser.parseLevelDetails(spellContext);
+        }
     }
 
     private String parseName(List<Element> spellParagraphs) {
