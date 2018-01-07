@@ -25,7 +25,7 @@ public class SpellParserImpl implements SpellParser {
 
     private Map<URL, SpellContext> parsedSpells = new HashMap<>();
 
-    // memorize places where you have been so you don't get stuckin an recursive endless loop
+    // memorize places where you have been so you don't get stuck in an recursive endless loop
     private List<URL> urlMemory;
 
     @Override
@@ -63,23 +63,23 @@ public class SpellParserImpl implements SpellParser {
     }
 
     private boolean isTitleWith(String targetReference, Element element) {
-        return widenReferenceMatches(targetReference).contains(element.attr("id"));
+        return widenIdMatches(targetReference).contains(element.attr("id"));
     }
 
-    private List<String> widenReferenceMatches(String targetReference) {
+    private List<String> widenIdMatches(String targetReference) {
         // eventually, there are typos within the targetReference or the id
         // we try other, possible references with what we know from our experience
-        List<String> heuristicReferences = new ArrayList<>();
-        heuristicReferences.add(targetReference);
-        addHeuristicReference(heuristicReferences, targetReference, ",", "");
-        addHeuristicReference(heuristicReferences, targetReference, "-lesser", ",-lesser");
-        addHeuristicReference(heuristicReferences, targetReference, "-greater", ",-greater");
-        addHeuristicReference(heuristicReferences, targetReference, "-mass", ",-mass");
-        return heuristicReferences;
+        List<String> heuristicIds = new ArrayList<>();
+        heuristicIds.add(targetReference);
+        addHeuristicId(heuristicIds, targetReference, ",", "");
+        addHeuristicId(heuristicIds, targetReference, "-lesser", ",-lesser");
+        addHeuristicId(heuristicIds, targetReference, "-greater", ",-greater");
+        addHeuristicId(heuristicIds, targetReference, "-mass", ",-mass");
+        return heuristicIds;
     }
 
-    private void addHeuristicReference(final List<String> heuristicReferences, String targetReference,
-                                       String potentialTypo, String replacement) {
+    private void addHeuristicId(final List<String> heuristicReferences, String targetReference,
+                                String potentialTypo, String replacement) {
         if (targetReference.contains(potentialTypo)) {
             heuristicReferences.add(targetReference.replace(potentialTypo, replacement));
         }
