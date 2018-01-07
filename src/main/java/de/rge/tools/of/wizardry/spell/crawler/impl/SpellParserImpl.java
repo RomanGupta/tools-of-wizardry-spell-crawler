@@ -3,6 +3,7 @@ package de.rge.tools.of.wizardry.spell.crawler.impl;
 import de.rge.tools.of.wizardry.spell.crawler.api.SpellParser;
 import de.rge.tools.of.wizardry.spell.crawler.model.Spell;
 import de.rge.tools.of.wizardry.spell.crawler.util.HtmlDocumentUtil;
+import de.rge.tools.of.wizardry.spell.crawler.util.MissingSpellReferenceMapping;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -104,18 +105,23 @@ public class SpellParserImpl implements SpellParser {
 
     private SpellContext parseSpellReference(List<Element> spellParagraphs, URL spellUrl) {
         log.info("parsing spell references for spell url: {}", spellUrl);
-        Elements spellLinks = collectAllLinks(spellParagraphs);
-        return new SpellCrawlerImpl(spellUrl).convertToUrls(spellLinks).stream()
+        List<URL> spellReferences = collectAllLinks(spellParagraphs, spellUrl);
+        return spellReferences.stream()
                 .filter(this::isValidSpellUrl)
                 .map(this::parseSpellContext)
                 .findFirst()
                 .orElse(null);
     }
 
-    private Elements collectAllLinks(List<Element> spellParagraphs) {
-        return spellParagraphs.stream()
+    private List<URL> collectAllLinks(List<Element> spellParagraphs, URL spellUrl) {
+        URL spellReferenceURL = MissingSpellReferenceMapping.getReferenceUrl(spellUrl);
+        if(null != spellReferenceURL) {
+            return Collections.singletonList(spellReferenceURL);
+        }
+        Elements links = spellParagraphs.stream()
                 .flatMap(element -> element.select("a[href]").stream())
                 .collect(Collectors.toCollection(Elements::new));
+        return new SpellCrawlerImpl(spellUrl).convertToUrls(links);
     }
 
     private boolean isValidSpellUrl(URL url) {
